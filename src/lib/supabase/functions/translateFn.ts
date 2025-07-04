@@ -1,0 +1,40 @@
+import { z } from 'zod'
+import { supabase } from '../client'
+
+// Define supported languages
+export const SupportedLanguage = z.enum(['french', 'spanish', 'arabic', 'hindi'])
+export type SupportedLanguage = z.infer<typeof SupportedLanguage>
+
+// Define request schema
+export const TranslationRequestSchema = z.object({
+  prompt: z.string().min(1, "Prompt cannot be empty"),
+  lang: SupportedLanguage
+})
+
+export type TranslationRequest = z.infer<typeof TranslationRequestSchema>
+
+interface TranslateResponse {
+  translatedText: string
+  detectedSourceLang?: string
+}
+
+export async function translateFn({ prompt, lang }: TranslationRequest): Promise<TranslateResponse> {
+  // Validate the request
+  TranslationRequestSchema.parse({ prompt, lang })
+
+  const { data, error } = await supabase.functions.invoke('translate', {
+    body: {
+      text: prompt,
+      target_lang: lang,
+    },
+  })
+
+  if (error) {
+    throw new Error(`Translation failed: ${error.message}`)
+  }
+
+  return {
+    translatedText: data.translatedText,
+    detectedSourceLang: data.detectedSourceLang
+  }
+} 
