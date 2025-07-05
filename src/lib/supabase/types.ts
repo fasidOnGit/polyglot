@@ -214,3 +214,22 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+export interface Thread {
+  id: string
+  user_id: string
+  created_at: string
+  updated_at: string
+}
+
+export interface Message {
+  id: string
+  thread_id: string
+  content: string
+  role: "user" | "assistant"
+  created_at: string
+}
+
+export type ThreadWithMessages = Thread & {
+  messages: Message[]
+}

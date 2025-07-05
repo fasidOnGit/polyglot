@@ -1,12 +1,19 @@
 import { useMutation } from '@tanstack/react-query'
 import { translateFn, type TranslationRequest } from '../lib/supabase/functions'
 
+interface TranslationResponse {
+  text: string
+}
+
 export function useTranslation() {
   return useMutation<
-    { prompt: string; lang: string },
+    TranslationResponse,
     Error,
     TranslationRequest
   >({
-    mutationFn: translateFn,
+    mutationFn: async (params) => {
+      const result = await translateFn(params)
+      return result
+    }
   })
 } 

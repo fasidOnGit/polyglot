@@ -1,38 +1,35 @@
-import { z } from 'zod'
-import { supabase } from '../client'
+import { z } from "zod";
+import { supabase } from "../client"
 
 // Define supported languages
-export const SupportedLanguage = z.enum(['french', 'spanish', 'arabic', 'hindi'])
-export type SupportedLanguage = z.infer<typeof SupportedLanguage>
+const SupportedLanguage = z.enum(['french', 'spanish', 'arabic', 'hindi']);
+export type SupportedLanguage = z.infer<typeof SupportedLanguage>;
 
-// Define request schema
+// Define the request schema
 export const TranslationRequestSchema = z.object({
   prompt: z.string().min(1, "Prompt cannot be empty"),
-  lang: SupportedLanguage
-})
+  lang: SupportedLanguage,
+  thread_id: z.string().uuid("Invalid thread ID")
+});
 
-export type TranslationRequest = z.infer<typeof TranslationRequestSchema>
+export type TranslationRequest = z.infer<typeof TranslationRequestSchema>;
 
-interface TranslateResponse {
+export interface TranslationResponse {
   text: string
 }
 
-export async function translateFn({ prompt, lang }: TranslationRequest): Promise<TranslateResponse> {
-  // Validate the request
-  TranslationRequestSchema.parse({ prompt, lang })
-
-  const { data, error } = await supabase.functions.invoke('translate', {
-    body: {
-      prompt,
-      lang,
-    },
+export async function translateFn(params: TranslationRequest): Promise<TranslationResponse> {
+  const { data, error } = await supabase.functions.invoke<TranslationResponse>("translate", {
+    body: params
   })
 
   if (error) {
-    throw new Error(`Translation failed: ${error.message}`)
+    throw error
   }
 
-  return {
-    text: data.text,
+  if (!data) {
+    throw new Error("No response data received")
   }
+
+  return data
 } 

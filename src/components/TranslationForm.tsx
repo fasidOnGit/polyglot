@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { SupportedLanguage, TranslationRequestSchema, translateFn } from "@/lib/supabase/functions/translateFn"
+import { SupportedLanguage, translateFn, TranslationRequestSchema } from "@/lib/supabase/functions/translateFn"
 
 interface TranslationFormProps {
   onTranslationComplete?: (translatedText: string) => void

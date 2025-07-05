@@ -1,9 +1,9 @@
+import { ChatContainer } from "../components/chat/ChatContainer"
+
 export function ChatPage() {
   return (
-    <section aria-label="Chat section">
-      <div className="bg-white rounded-lg shadow p-6">
-        <p className="text-gray-500">Chat functionality coming soon...</p>
-      </div>
+    <section className="container mx-auto px-4 py-8" aria-label="Chat section">
+      <ChatContainer />
     </section>
   )
 } 
