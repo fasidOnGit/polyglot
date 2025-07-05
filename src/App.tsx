@@ -1,7 +1,11 @@
+import { useState } from 'react'
 import './App.css'
 import headerImage from './assets/header.png'
+import TranslationForm from './components/TranslationForm'
 
 function App() {
+  const [translatedText, setTranslatedText] = useState<string>("")
+
   return (
     <div className="min-h-screen flex flex-col">
       <header 
@@ -16,8 +20,20 @@ function App() {
         />
       </header>
       
-      <main className="flex-1 p-6" role="main">
-        {/* TODO: Add main content here */}
+      <main className="flex-1 p-6 container mx-auto max-w-2xl" role="main">
+        <section aria-label="Translation form">
+          <TranslationForm onTranslationComplete={setTranslatedText} />
+        </section>
+
+        {translatedText && (
+          <section 
+            className="mt-8 p-4 border rounded-lg bg-muted"
+            aria-label="Translation result"
+          >
+            <h2 className="text-lg font-semibold mb-2">Translation</h2>
+            <p>{translatedText}</p>
+          </section>
+        )}
       </main>
     </div>
   )

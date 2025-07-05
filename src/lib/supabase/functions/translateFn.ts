@@ -14,8 +14,7 @@ export const TranslationRequestSchema = z.object({
 export type TranslationRequest = z.infer<typeof TranslationRequestSchema>
 
 interface TranslateResponse {
-  translatedText: string
-  detectedSourceLang?: string
+  text: string
 }
 
 export async function translateFn({ prompt, lang }: TranslationRequest): Promise<TranslateResponse> {
@@ -24,8 +23,8 @@ export async function translateFn({ prompt, lang }: TranslationRequest): Promise
 
   const { data, error } = await supabase.functions.invoke('translate', {
     body: {
-      text: prompt,
-      target_lang: lang,
+      prompt,
+      lang,
     },
   })
 
@@ -34,7 +33,6 @@ export async function translateFn({ prompt, lang }: TranslationRequest): Promise
   }
 
   return {
-    translatedText: data.translatedText,
-    detectedSourceLang: data.detectedSourceLang
+    text: data.text,
   }
 } 
