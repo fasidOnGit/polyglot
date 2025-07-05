@@ -1,14 +1,17 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ChatMessage } from "./ChatMessage"
 import { ChatInput } from "./ChatInput"
+import { LanguageSelector } from "./LanguageSelector"
 import * as ScrollArea from "@radix-ui/react-scroll-area"
 import { useThread } from "@/hooks/useThread"
 import { useMessages } from "@/hooks/useMessages"
 import type { Message } from "@/lib/supabase/types"
+import type { SupportedLanguage } from "@/lib/supabase/functions/translateFn"
 
 export function ChatContainer() {
   const { thread, isLoadingThread } = useThread()
   const { messages, sendMessage, isPending } = useMessages(thread?.id)
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguage>("french")
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -21,7 +24,7 @@ export function ChatContainer() {
     if (!thread?.id) return
 
     sendMessage(
-      { content, lang: "french" }, // You might want to make this configurable
+      { content, lang: selectedLanguage },
       {
         onError: (error) => {
           console.error("Translation failed:", error)
@@ -55,10 +58,15 @@ export function ChatContainer() {
         </ScrollArea.Scrollbar>
       </ScrollArea.Root>
       
-      <div className="p-4">
+      <div className="p-4 space-y-4">
         <ChatInput 
           onSendMessage={handleSendMessage}
           disabled={isLoadingThread || isPending}
+        />
+        <LanguageSelector
+          value={selectedLanguage}
+          onChange={setSelectedLanguage}
+          disabled={isPending}
         />
       </div>
     </div>
