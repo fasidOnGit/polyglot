@@ -1,41 +1,51 @@
-import { useState } from 'react'
-import './App.css'
-import headerImage from './assets/header.png'
-import TranslationForm from './components/TranslationForm'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { AuthProvider } from "./contexts/auth"
+import { ProtectedRoute } from "./components/auth/ProtectedRoute"
+import { LoginPage } from "./pages/login"
+import { SignupPage } from "./pages/signup"
+import { TranslatePage } from "./pages/translate"
+import { ChatPage } from "./pages/chat"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { RootLayout } from "./components/layout/RootLayout"
+
+const queryClient = new QueryClient()
 
 function App() {
-  const [translatedText, setTranslatedText] = useState<string>("")
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <header 
-        className="h-[30vh] relative overflow-hidden flex items-center justify-center"
-        role="banner"
-        aria-label="Application header with background image"
-      >
-        <img 
-          src={headerImage}
-          alt="Header background"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-      </header>
-      
-      <main className="flex-1 p-6 container mx-auto max-w-2xl" role="main">
-        <section aria-label="Translation form">
-          <TranslationForm onTranslationComplete={setTranslatedText} />
-        </section>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <RootLayout>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
 
-        {translatedText && (
-          <section 
-            className="mt-8 p-4 border rounded-lg bg-muted"
-            aria-label="Translation result"
-          >
-            <h2 className="text-lg font-semibold mb-2">Translation</h2>
-            <p>{translatedText}</p>
-          </section>
-        )}
-      </main>
-    </div>
+              {/* Protected routes */}
+              <Route
+                path="/translate"
+                element={
+                  <ProtectedRoute>
+                    <TranslatePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chat"
+                element={
+                  <ProtectedRoute>
+                    <ChatPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Redirect root to translate */}
+              <Route path="/" element={<Navigate to="/translate" replace />} />
+            </Routes>
+          </RootLayout>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
   )
 }
 

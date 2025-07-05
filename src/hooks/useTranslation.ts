@@ -3,7 +3,7 @@ import { translateFn, type TranslationRequest } from '../lib/supabase/functions'
 
 export function useTranslation() {
   return useMutation<
-    { translatedText: string; detectedSourceLang?: string },
+    { prompt: string; lang: string },
     Error,
     TranslationRequest
   >({
