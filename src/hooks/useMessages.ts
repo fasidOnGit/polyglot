@@ -90,7 +90,7 @@ export function useMessages(threadId: string | undefined) {
       return { previousMessages }
     },
     // If the mutation fails, use the context returned from onMutate to roll back
-    onError: (err, newMessage, context) => {
+    onError: (_err, _newMessage, context) => {
       if (threadId && context?.previousMessages) {
         queryClient.setQueryData(["messages", threadId], context.previousMessages)
       }
