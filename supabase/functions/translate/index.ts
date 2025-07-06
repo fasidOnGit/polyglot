@@ -29,15 +29,13 @@ Deno.serve(async (req)=>{
     });
   }
   try {
-     const supabase = createClient(
-       Deno.env.get('SUPABASE_URL') ?? '',
-       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-       {
-         global: {
-           headers: { Authorization: req.headers.get('Authorization') ?? '' }
-         }
-       }
-     );
+    const supabase = createClient(Deno.env.get('SUPABASE_URL') ?? '', Deno.env.get('SUPABASE_ANON_KEY') ?? '', {
+      global: {
+        headers: {
+          Authorization: req.headers.get('Authorization') ?? ''
+        }
+      }
+    });
     const body = await req.json();
     const result = TranslationRequestSchema.safeParse(body);
     if (!result.success) {
