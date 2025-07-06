@@ -6,8 +6,18 @@ interface ChatMessageProps {
   timestamp: Date
 }
 
+function isValidImageUrl(content: string): boolean {
+  try {
+    const url = new URL(content);
+    return url.protocol === 'https:' && /\.(jpg|jpeg|png|webp|avif)$/.test(url.pathname);
+  } catch {
+    return false;
+  }
+}
+
 export function ChatMessage({ content, role, timestamp }: ChatMessageProps) {
   const isUser = role === "user"
+  const isImage = !isUser && isValidImageUrl(content)
   
   return (
     <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
@@ -43,13 +53,24 @@ export function ChatMessage({ content, role, timestamp }: ChatMessageProps) {
       
       <div className={`flex flex-col max-w-[80%] ${isUser ? "items-end" : "items-start"}`}>
         <div 
-          className={`rounded-lg px-4 py-2 ${
+          className={`rounded-lg ${
             isUser 
-              ? "bg-blue-500 text-white" 
-              : "bg-emerald-50 text-gray-900 border border-emerald-200"
+              ? "bg-blue-500 text-white px-4 py-2" 
+              : isImage
+                ? "bg-white p-1 border border-emerald-200"
+                : "bg-emerald-50 text-gray-900 border border-emerald-200 px-4 py-2"
           }`}
         >
-          {content}
+          {isImage ? (
+            <img 
+              src={content} 
+              alt="Generated" 
+              className="max-w-full rounded"
+              loading="lazy"
+            />
+          ) : (
+            content
+          )}
         </div>
         <span className="text-xs text-gray-500 mt-1">
           {timestamp.toLocaleTimeString([], { 

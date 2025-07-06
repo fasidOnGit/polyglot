@@ -27,6 +27,7 @@ Deno.serve((req) => handleEdgeFunction(req, TranslationRequestSchema, async (con
 
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
+    temperature: 1.5,
     messages: [
       {
         role: "system",

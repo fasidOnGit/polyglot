@@ -7,7 +7,7 @@ import { handleEdgeFunction, baseRequestSchema, saveMessages } from "../utils/ed
 // Define the request schema
 const ImageGenerationRequestSchema = z.object({
   ...baseRequestSchema,
-  size: z.enum(['256x256', '512x512', '1024x1024']).default('512x512'),
+  size: z.enum(['1024x1024', '1024x1792', '1792x1024']).default('1024x1024'),
 });
 
 const openai = new OpenAI({
